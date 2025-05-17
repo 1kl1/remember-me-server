@@ -3,10 +3,10 @@ services:
   api:
     build: .
     ports:
-      - "5555:5555"
+      - "80:80"
     volumes:
       - .:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 5555 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 80 --reload
     environment:
       - TZ=Asia/Tokyo
     depends_on:
