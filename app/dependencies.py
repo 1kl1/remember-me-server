@@ -2,9 +2,13 @@
 import chromadb
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from langchain_chroma import Chroma
 from app.core.security import verify_token
 from app.schemas.auth import TokenData
 from app.db.base import SessionLocal
+from langchain_community.embeddings import OpenAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"/api/v1/auth/token")
 
@@ -32,9 +36,29 @@ def get_db():
     finally:
         db.close()
 
-def get_vectordb():
-    client = chromadb.HttpClient(host="chroma", port=5555)
+async def get_vectordb(token: str = Depends(oauth2_scheme)) -> Chroma:
+    client = chromadb.HttpClient(host="chroma", port=8000)
+    embeddings = OpenAIEmbeddings()
+
     try:
-        yield client
-    finally:
-        client.close()
+        token_data = await verify_token(token)
+
+        db = Chroma(
+            client=client,
+            collection_name=token_data.uid,
+            embedding_function=embeddings
+        )
+        
+        return db
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+
+
+
+     

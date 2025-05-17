@@ -3,10 +3,10 @@ services:
   api:
     build: .
     ports:
-      - "8000:8000"
+      - "5555:5555"
     volumes:
       - .:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 5555 --reload
     environment:
       - TZ=Asia/Tokyo
     depends_on:
@@ -31,7 +31,7 @@ services:
     volumes:
       - chroma-data:/chroma/chroma
     ports:
-      - "5555:5555"
+      - "8000:8000"
     environment:
       - ALLOW_RESET=True
       - ANONYMIZED_TELEMETRY=False

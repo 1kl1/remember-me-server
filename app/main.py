@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth
-from app.api.protected import users
+from app.api.protected import users, test
 from app.config import settings
 from app.db.base import Base, engine
 import firebase_admin
@@ -45,6 +45,7 @@ app.add_middleware(
 
 app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(users.router, prefix=settings.API_V1_STR)
+app.include_router(test.router, prefix=settings.API_V1_STR) 
 
 @app.get("/")
 async def root():
@@ -56,4 +57,4 @@ async def health_check():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=5555, reload=True)
