@@ -8,13 +8,28 @@ from requests import Session
 from app.core.exceptions import NotFound
 from app.db.crud.memory import create_memory, create_memory_image, get_user_memories
 from app.db.crud.user import get_user_by_firebase_uid
-
+from langchain.chains import RetrievalQA
 from app.dependencies import get_current_user, get_db, get_vectordb
+from app.schemas.ai import QueryInput
+from app.ai.base import llm
 from app.schemas.auth import TokenData
 from app.schemas.memory import CreateImageMemory, CreateMemory, ListMemoryResponse
 
 
 router = APIRouter(prefix="/memories", tags=["memories"])
+
+@router.get("/recall")
+async def recall_memory(
+    query_input: QueryInput,
+    vectordb: Chroma = Depends(get_vectordb),
+) -> Any:
+    qa_chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=vectordb.as_retriever()
+    )
+    result = qa_chain.invoke({"query": query_input.query})
+    return {"answer": result["result"]}
 
 @router.get("/me", response_model=ListMemoryResponse)
 async def list_user_memories(
