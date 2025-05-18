@@ -20,3 +20,4 @@ openai
 langchain-openai
 langchain-google-genai
 google-generativeai
+langchain-anthropic

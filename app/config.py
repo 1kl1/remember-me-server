@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     FIREBASE_API_KEY: str = os.getenv(
         "FIREBASE_API_KEY", ""
     )
+    ANTHROPIC_API_KEY: str = os.getenv(
+        "ANTHROPIC_API_KEY", "ANTHROPIC_API_KEY"
+    )
 
     FIREBASE_AUTH_URL: str = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={os.getenv('FIREBASE_API_KEY', '')}"
     

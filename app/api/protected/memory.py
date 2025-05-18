@@ -5,7 +5,9 @@ from langchain_community.docstore.document import Document
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from langchain_chroma import Chroma
 from requests import Session
+from app.ai.image_process import get_image_description_chain
 from app.core.exceptions import NotFound
+from app.core.utilities import compress_image_to_base64
 from app.db.crud.memory import create_memory, create_memory_image, get_user_memories
 from app.db.crud.user import get_user_by_firebase_uid
 from langchain.chains import RetrievalQA
@@ -58,6 +60,18 @@ async def create_image_memory(
     
     create_memory_image(db, CreateImageMemory(image_url=image_url), user.id)
     try:
+        image_content = await image.read()
+        image_data = await compress_image_to_base64(image_content)
+        description_chain = get_image_description_chain()
+        result = description_chain({
+            "image_data": image_data
+        })
+        
+        langchain_docs = [
+            Document(page_content=result.description, metadata={})
+        ]
+        vectordb.add_documents(langchain_docs)
+
         return True
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to add documents: {str(e)}")
