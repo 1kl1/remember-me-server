@@ -18,7 +18,7 @@ from app.schemas.memory import CreateImageMemory, CreateMemory, ListMemoryRespon
 
 router = APIRouter(prefix="/memories", tags=["memories"])
 
-@router.get("/recall")
+@router.post("/recall")
 async def recall_memory(
     query_input: QueryInput,
     vectordb: Chroma = Depends(get_vectordb),
