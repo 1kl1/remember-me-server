@@ -10,7 +10,7 @@ from app.schemas.auth import TokenData
 from app.schemas.user import User
 from langchain.chains import RetrievalQA
 from app.ai.base import llm
-from langchain_core.documents import Document
+from xml.dom.minidom import Document
 
 
 router = APIRouter(prefix="/test", tags=["test"])

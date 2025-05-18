@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import text
 from app.db.base import Base
+from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ = "users"
@@ -15,5 +16,4 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=text("timezone('Asia/Tokyo', now())"))
     updated_at = Column(DateTime(timezone=True), onupdate=text("timezone('Asia/Seoul', now())"))
     
-
-
+    memories = relationship("Memory", back_populates="author")
